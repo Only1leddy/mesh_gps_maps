@@ -26,19 +26,20 @@ FONT_SIZE = 20
 interface = None
 connected = False
 retry_interval = 5
-
+# change for you nodes 
 NODE_NAMES = {
     "!a0ca43ac": "rome",
     "!433d7330": "ldgps",
     "!e00cea84": "base"
 }
+# change ref nodes above
 NODE_COLORS = {
     "!a0ca43ac": (0,120,255),
     "!433d7330": (0,220,100),
     "!e00cea84": (220,100,20)
 }
 
-
+#del this is you dont have fan! 
 def cpu_temp():
     with open("/sys/class/thermal/thermal_zone0/temp") as f:
         return int(f.read().strip()) / 1000
@@ -58,117 +59,25 @@ def fan_loop():
         print(f"[FAN] Error: {e}")
     finally:
         GPIO.output(FAN_PIN, GPIO.LOW)
-
+#and this
 # start fan loop in background
 fan_thread = threading.Thread(target=fan_loop, daemon=True)
 fan_thread.start()
 
 
 
-# --- Map configs ---
+# --- Map configs --- load your maps parths and Lat/Lon of each map (derived from georef files)
 MAPS = {
-    "Local WD25": {
-        "file": "map(1).png",
-        "LAT_TOP": 51.7099886,
-        "LAT_BOTTOM": 51.6750538,
-        "LON_LEFT": -0.4060904,
-        "LON_RIGHT": -0.3537618
-    },
-    "Español Basic": {
+    "Espanol Basic": {
         "file": "map_esp_basic_scaled.png",
         "LAT_TOP": 37.5469926,
         "LAT_BOTTOM": 37.3708455,
         "LON_LEFT": -2.4593738,
         "LON_RIGHT": -2.328202
-    },
-    "Local small": {
-        "file": "map_scaled.png",
-        "LAT_TOP": 51.7015244,
-        "LAT_BOTTOM": 51.6957169,
-        "LON_LEFT": -0.3808913,
-        "LON_RIGHT": -0.3725862
-    },
-    "Watford_1": {
-        "file": "new_map.png",
-        "LAT_TOP": 51.77670547629354,
-        "LAT_BOTTOM": 51.61236827490706,
-        "LON_LEFT": -0.5136914388140512,
-        "LON_RIGHT": -0.24856856118594878
-        
-    },
-    "Watford_2": {
-        "file": "new_map2.png",
-        "LAT_TOP": 51.776305065874766,
-        "LAT_BOTTOM": 51.61196640792014,
-        "LON_LEFT": -0.5167983475362554,
-        "LON_RIGHT": -0.2516754699081532
-        
-    },
-    "Watford_3": {
-        "file": "output.png",
-        "LAT_TOP": 51.711938979022385,
-        "LAT_BOTTOM": 51.679479042008275,
-        "LON_LEFT": -0.44832121765048083,
-        "LON_RIGHT": -0.3262235796872691
-    },
-    "Home_small": {
-        "file": "home_small.png",
-        "LAT_TOP": 51.70597497819147,
-        "LAT_BOTTOM": 51.682326273245636,
-        "LON_LEFT": -0.40055873241072576,
-        "LON_RIGHT": -0.35953166331892883
-        
-    },
-    "Home_small_goggle": {
-        "file": "home_small_goggle.png",
-        "LAT_TOP": 51.70597497819147,
-        "LAT_BOTTOM": 51.682326273245636,
-        "LON_LEFT": -0.40055873241072576,
-        "LON_RIGHT": -0.35953166331892883
-        
-    },
-    "Spain_small": {
-        "file": "map_spain_small.png",
-        "LAT_TOP": 37.51017110463905,
-        "LAT_BOTTOM": 37.461099898512224,
-        "LON_LEFT": -2.4343301150219263,
-        "LON_RIGHT": -2.3644210192577657
-    },
-    "Oria": {
-        "file": "oria.png",
-        "LAT_TOP": 37.50474217368165,
-        "LAT_BOTTOM": 37.441700008334365,
-        "LON_LEFT": -2.4230004864111616,
-        "LON_RIGHT": -2.2890759581754887
-    },
-    "spain_house": {
-        "file": "spain_house.png",
-        "LAT_TOP": 37.51039340900377,
-        "LAT_BOTTOM": 37.479795140618265,
-        "LON_LEFT": -2.432270204913926,
-        "LON_RIGHT": -2.3830916364347297
-       
-        
-    },
-    "watford_Big_Map": {
-        "file": "watford_Big_Map.png",
-        "LAT_TOP": 51.71179589213085,
-        "LAT_BOTTOM": 51.61344530375959,
-        "LON_LEFT": -0.47882920663368356,
-        "LON_RIGHT": -0.2861539571478854
-    
-        
-    },
-    "watford_too_Big": {
-        "file": "watford_too_Big.png",
-        "LAT_TOP": 51.71179589228381,
-        "LAT_BOTTOM": 51.613381745986516,
-        "LON_LEFT": -0.4788292125313997,
-        "LON_RIGHT": -0.28579599414761053
     }
 }
 
-current_map = "Home_small"
+current_map = "Espanol Basic"
 MAP_FILE = MAPS[current_map]["file"]
 LAT_TOP = MAPS[current_map]["LAT_TOP"]
 LAT_BOTTOM = MAPS[current_map]["LAT_BOTTOM"]
@@ -206,24 +115,11 @@ clock = pygame.time.Clock()
 def draw_text(text, pos, color=(0,0,0)):
     txt = font.render(text, True, color)
     screen.blit(txt, pos)
-
+    
+# dont ask dont touch dont brake
 X_OFFSET_DEG = 0.00000   # + right
 Y_OFFSET_DEG = 0.00000   # + down
 
-def off_set(current_mapy):
-    global X_OFFSET_DEG, Y_OFFSET_DEG
-    if current_mapy == "Local small":
-        X_OFFSET_DEG = 0.00068   # + right
-        Y_OFFSET_DEG = 0.00019   # + down
-        return X_OFFSET_DEG, Y_OFFSET_DEG
-    elif current_mapy == "Local WD25":
-        X_OFFSET_DEG = 0.00020   # + right
-        Y_OFFSET_DEG = 0.00190   # + down
-        return X_OFFSET_DEG, Y_OFFSET_DEG
-    else:
-        X_OFFSET_DEG = 0.00000   # + right
-        Y_OFFSET_DEG = 0.00000   # + down
-        return X_OFFSET_DEG, Y_OFFSET_DEG
     
 def gps_to_screen(lat, lon, lat_top, lat_bottom, lon_left, lon_right, scaled_width, scaled_height, pan_offset):
     # normalize 0..1
@@ -620,7 +516,7 @@ while running:
                 else:
                     for rect,label in button_rects:
                         if rect.collidepoint(x,y):
-                            if label=="Quit": running=False; os.system("sudo poweroff")
+                            if label=="Quit": running=False##!! option to turn off fully; os.system("sudo poweroff")
                             
                             elif label=="Zoom In":
                                 old_center = (SCREEN_SIZE[0]//2, SCREEN_SIZE[1]//2)
